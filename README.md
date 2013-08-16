@@ -26,6 +26,12 @@ pear install phing/phing
 pear install VersionControl_Git-0.4.4
 ```
 
+### MySQL and a test database
+
+Out of the box, the script expects a MySQL server instance at `127.0.0.1`, a database named `ezpublish_test`,
+and user `root` with no password. If you want to override those values, copy the file `config/config.properties` to
+`config/config_local.properties` and change the variables.
+
 
 ## Installation
 

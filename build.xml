@@ -4,12 +4,11 @@
     <property name="cache.dir" value="${project.basedir}/cache" />
     <property name="scripts.dir" value="${project.basedir}/scripts" />
 
-    <property name="db.type" value="mysql" />
-    <property name="db.user" value="root" />
-    <property name="db.password" value="" />
-    <property name="db.database" value="ezpublish_test" />
-
     <resolvepath file="${cache.dir}/composer.phar" propertyName="composer" />
+
+    <property file="${project.basedir}/config/config_local.properties" />
+    <property file="${project.basedir}/config/config.properties" />
+
 
     <property name="extensions" value="" />
 
@@ -17,7 +16,6 @@
         <delete dir="${build.dir}" />
         <mkdir dir="${build.dir}" />
         <mkdir dir="${cache.dir}" />
-
 
         <!-- Install composer, if not already there -->
         <if>
