@@ -94,5 +94,5 @@ phing test -Dextensions=ezprestapiprovider,ezcomments
 This is useful if you have a build available, test changes and don't want to rebuild.
 
 ```
-phing test-existing -Dextensions=ezcomments
+phing test-existing
 ```
