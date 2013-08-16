@@ -65,8 +65,11 @@
     </target>
 
     <target name="setup-ezpublish" hidden="true">
+        <property file="${project.basedir}/config/ezpublish-legacy.properties"/>
+
         <phingcall target="setup-repository">
             <property name="repo.name" value="ezpublish-legacy" />
+            <property name="repo.url" value="${repo.url}" />
         </phingcall>
 
         <copy todir="${build.dir}" verbose="false">
