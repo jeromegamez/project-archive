@@ -1,0 +1,25 @@
+language: php
+
+php:
+  - 5.3.3
+  - 5.4
+  - 5.5
+
+env:
+  global:
+    - DB="mysql"
+    - DB_NAME="ezpublish_test"
+    - DB_USER="root"
+    - TIMEZONE="Europe/Berlin"
+
+before_script:
+  - pear channel-discover pear.phing.info
+  - pear install phing/phing
+  - pear install VersionControl_Git-0.4.4
+  - phpenv rehash
+
+script:
+  - phing -Ddb.type=${DB} -Ddb.user=${DB_USER} -Ddb.database=${DB_NAME} test
+
+notification:
+  email: false
