@@ -97,6 +97,8 @@
               passthru="true" checkreturn="true" dir="${build.dir}" />
         <exec command="patch -p0 &lt; ${project.basedir}/patches/EZP-21408_ezpgenerateautoloads.patch"
               passthru="true" checkreturn="true" dir="${build.dir}" />
+        <exec command="patch -p0 &lt; ${project.basedir}/patches/EZP-21421_ezptestrunner.patch"
+              passthru="true" checkreturn="true" dir="${build.dir}" />
 
         <!-- Install composer dependencies -->
         <exec command="php ${composer} -n install --no-dev"
