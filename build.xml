@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="eZ Publish (LS) Tests" basedir="." default="test">
+    <property name="build.dir" value="${project.basedir}/build" />
+    <property name="cache.dir" value="${project.basedir}/cache" />
+    <property name="scripts.dir" value="${project.basedir}/scripts" />
+
+    <property name="db.type" value="mysql" />
+    <property name="db.user" value="root" />
+    <property name="db.password" value="" />
+    <property name="db.database" value="ezpublish_test" />
+
+    <resolvepath file="${cache.dir}/composer.phar" propertyName="composer" />
+
+    <property name="extensions" value="" />
+
+    <target name="prepare">
+        <delete dir="${build.dir}" />
+        <mkdir dir="${build.dir}" />
+        <mkdir dir="${cache.dir}" />
+
+
+        <!-- Install composer, if not already there -->
+        <if>
+            <not><available file="${composer}" property="composer.exists" /></not>
+            <then>
+                <exec dir="${cache.dir}" command="curl -sS https://getcomposer.org/installer | php"
+                      passthru="true" checkreturn="true" />
+            </then>
+        </if>
+        <exec command="php ${composer} -n self-update" passthru="true" checkreturn="true" />
+    </target>
+
+    <target name="build" depends="prepare, setup-ezpublish, setup-extensions">
+        <!-- Activating default extensions -->
+        <exec command="php ${scripts.dir}/activate_extension.php ezjscore"
+              passthru="true" checkreturn="true" dir="${build.dir}" />
+        <exec command="php ${scripts.dir}/activate_extension.php ezformtoken"
+              passthru="true" checkreturn="true" dir="${build.dir}" />
+        <exec command="php ${scripts.dir}/activate_extension.php ezoe"
+              passthru="true" checkreturn="true" dir="${build.dir}" />
+
+        <!-- Generate autoloads -->
+        <exec dir="${build.dir}" command="php bin/php/ezpgenerateautoloads.php -e"
+              checkreturn="true" passthru="true"/>
+        <exec dir="${build.dir}" command="php bin/php/ezpgenerateautoloads.php -o"
+              checkreturn="true" passthru="true"/>
+    </target>
+
+    <target name="test" depends="build">
+        <!-- Create test database -->
+        <exec dir="${project.basedir}" command="mysql -e&quot;CREATE DATABASE IF NOT EXISTS ${db.database}&quot; -u${db.user};"
+              checkreturn="true" />
+
+        <!-- Generate autoloads for tests -->
+        <exec dir="${build.dir}" command="php bin/php/ezpgenerateautoloads.php -s"
+              checkreturn="true" passthru="true"/>
+
+        <!-- Perform unit tests -->
+        <exec dir="${build.dir}" command="php -dmemory_limit=1G tests/runtests.php --dsn &quot;${db.type}://${db.user}:${db.password}@127.0.0.1/${db.database}&quot;"
+              checkreturn="true" passthru="true"/>
+    </target>
+
+    <target name="setup-ezpublish" hidden="true">
+        <phingcall target="setup-repository">
+            <property name="repo.name" value="ezpublish-legacy" />
+        </phingcall>
+
+        <copy todir="${build.dir}" verbose="false">
+            <fileset dir="${cache.dir}/ezpublish-legacy">
+                <include name="**"/>
+                <exclude name=".git"/>
+            </fileset>
+        </copy>
+
+        <echo message="Applying patches" />
+        <exec command="patch -p0 &lt; ${project.basedir}/patches/composer.json.patch"
+              passthru="true" checkreturn="true" dir="${build.dir}" />
+        <exec command="patch -p0 &lt; ${project.basedir}/patches/EZP-21408_ezpgenerateautoloads.patch"
+              passthru="true" checkreturn="true" dir="${build.dir}" />
+
+        <!-- Install composer dependencies -->
+        <exec command="php ${composer} -n install --no-dev"
+              passthru="true" checkreturn="true" dir="${build.dir}"/>
+        <exec command="php ${composer} -o dump-autoload"
+              passthru="true" checkreturn="true" dir="${build.dir}"/>
+    </target>
+
+    <target name="setup-extensions" hidden="true">
+        <foreach list="${extensions}" param="name" target="setup-extension" />
+    </target>
+
+    <target name="setup-extension" hidden="true">
+        <property file="${project.basedir}/config/${name}.properties"/>
+
+        <phingcall target="setup-repository">
+            <property name="repo.name" value="${name}" />
+            <property name="repo.url" value="${repo.url}" />
+        </phingcall>
+
+        <copy todir="${build.dir}/extension/${name}">
+            <fileset dir="${cache.dir}/${name}/${extension_dir}">
+                <include name="**"/>
+                <exclude name=".git"/>
+            </fileset>
+        </copy>
+
+        <exec command="php ${scripts.dir}/activate_extension.php ${name}"
+              passthru="true" checkreturn="true" dir="${build.dir}" />
+    </target>
+
+    <target name="setup-repository" hidden="true">
+        <echo message="START Setting up Repository ${repo.name}" />
+        <if>
+            <not><available file="${cache.dir}/${repo.name}" type="dir" property="repo.exists" /></not>
+            <then>
+                <gitclone repository="${repo.url}" targetPath="${cache.dir}/${repo.name}" />
+            </then>
+        </if>
+        <gitpull repository="${cache.dir}/${repo.name}" quiet="true" />
+        <echo message="END Setting up Repository ${repo.name}" />
+    </target>
+</project>
