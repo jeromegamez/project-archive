@@ -1,9 +1,32 @@
 # eZ Publish Legacy Tests
 
-[![Build Status](https://travis-ci.org/jeromegamez/ezpublish-legacy-tests.png)](https://travis-ci.org/jeromegamez/ezpublish-legacy-tests)
+Execute PHPUnit tests for eZ Publish Legacy, optionally with one or more 
+activated extensions.
 
-Execute PHPUnit tests for eZ Publish Legacy, optionally with one or more activated
-extensions.
+## How it works
+
+With [Phing](http://www.phing.info) a clean eZ Publish installation is
+generated and PHPUnit tests are perfomed.
+
+### Details 
+
+- The [eZ Publish legacy](https://github.com/ezsystems/ezpublish-legacy)
+  repository and all testable extensions get cloned/pulled into the `cache`
+  directory
+
+- The eZ Publish core files and the extensions get copied into the `build`
+  directory.
+
+- The extensions are activated and the PHPUnit tests for the whole
+  installation are started
+
+## Build status [![Build Status](https://travis-ci.org/jeromegamez/ezpublish-legacy-tests.png)](https://travis-ci.org/jeromegamez/ezpublish-legacy-tests)
+
+Unfortunately, builds can not be triggered automatically as soon as one
+of ezsystems' repositories is updated. So the Travis CI build status only
+gets updated when triggered through a commit here.
+
+You can always clone this repository and perform the tests on your machine.
 
 ## Testable extensions
 
