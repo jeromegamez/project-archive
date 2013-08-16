@@ -32,7 +32,7 @@ pear install VersionControl_Git-0.4.4
 Clone this repository
 
 ```
-git clone tbd
+git clone https://github.com/jeromegamez/ezpublish-legacy-tests.git
 ```
 
 ## Usage
