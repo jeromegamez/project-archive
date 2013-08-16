@@ -77,7 +77,7 @@
         </copy>
 
         <echo message="Applying patches" />
-        <exec command="patch -p0 &lt; ${project.basedir}/patches/composer.json.patch"
+        <exec command="patch -p0 &lt; ${project.basedir}/patches/EZP-21420_composer.patch"
               passthru="true" checkreturn="true" dir="${build.dir}" />
         <exec command="patch -p0 &lt; ${project.basedir}/patches/EZP-21408_ezpgenerateautoloads.patch"
               passthru="true" checkreturn="true" dir="${build.dir}" />
@@ -126,7 +126,6 @@
         <copy todir="${build.dir}/extension/${name}">
             <fileset dir="${cache.dir}/${extension_name}/${extension_dir}">
                 <include name="**"/>
-                <exclude name=".git"/>
             </fileset>
         </copy>
     </target>
