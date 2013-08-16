@@ -64,6 +64,20 @@
               checkreturn="true" passthru="true"/>
     </target>
 
+    <target name="test-existing">
+        <!-- Create test database -->
+        <exec dir="${project.basedir}" command="mysql -e&quot;CREATE DATABASE IF NOT EXISTS ${db.database}&quot; -u${db.user};"
+              checkreturn="true" />
+
+        <!-- Generate autoloads for tests -->
+        <exec dir="${build.dir}" command="php bin/php/ezpgenerateautoloads.php -s"
+              checkreturn="true" passthru="true"/>
+
+        <!-- Perform unit tests -->
+        <exec dir="${build.dir}" command="php -dmemory_limit=1G tests/runtests.php --dsn &quot;${db.type}://${db.user}:${db.password}@127.0.0.1/${db.database}&quot;"
+              checkreturn="true" passthru="true"/>
+    </target>
+
     <target name="setup-ezpublish" hidden="true">
         <phingcall target="setup-repository">
             <property name="name" value="ezpublish-legacy" />
