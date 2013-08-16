@@ -6,7 +6,13 @@
 
     <resolvepath file="${cache.dir}/composer.phar" propertyName="composer" />
 
-    <property file="${project.basedir}/config/config_local.properties" />
+    <if>
+        <available file="${project.basedir}/config/config_local.properties" property="local_config.exists" />
+        <then>
+            <property file="${project.basedir}/config/config_local.properties" />
+        </then>
+    </if>
+
     <property file="${project.basedir}/config/config.properties" />
 
 
