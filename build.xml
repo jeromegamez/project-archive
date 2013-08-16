@@ -86,7 +86,6 @@
         <copy todir="${build.dir}" verbose="false">
             <fileset dir="${cache.dir}/ezpublish-legacy">
                 <include name="**"/>
-                <exclude name=".git"/>
             </fileset>
         </copy>
 
