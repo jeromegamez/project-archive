@@ -22,6 +22,9 @@ generated and PHPUnit tests are perfomed.
 
 ## Build status [![Build Status](https://travis-ci.org/jeromegamez/ezpublish-legacy-tests.png)](https://travis-ci.org/jeromegamez/ezpublish-legacy-tests)
 
+When the build is marked as failed, this means that one of the extension's
+unit tests did not pass.
+
 Unfortunately, builds can not be triggered automatically as soon as one
 of ezsystems' repositories is updated. So the Travis CI build status only
 gets updated when triggered through a commit here.
