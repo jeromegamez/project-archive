@@ -1,5 +1,7 @@
 # eZ Publish Legacy Tests
 
+[![Build Status](https://travis-ci.org/jeromegamez/ezpublish-legacy-tests.png)](https://travis-ci.org/jeromegamez/ezpublish-legacy-tests)
+
 Execute PHPUnit tests for eZ Publish Legacy, optionally with one or more activated
 extensions.
 
