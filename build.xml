@@ -65,11 +65,8 @@
     </target>
 
     <target name="setup-ezpublish" hidden="true">
-        <property file="${project.basedir}/config/ezpublish-legacy.properties"/>
-
         <phingcall target="setup-repository">
-            <property name="repo.name" value="ezpublish-legacy" />
-            <property name="repo.url" value="${repo.url}" />
+            <property name="name" value="ezpublish-legacy" />
         </phingcall>
 
         <copy todir="${build.dir}" verbose="false">
@@ -93,37 +90,44 @@
     </target>
 
     <target name="setup-extensions" hidden="true">
-        <foreach list="${extensions}" param="name" target="setup-extension" />
+        <foreach list="${extensions}" param="extension_name" target="setup-extension" />
     </target>
 
     <target name="setup-extension" hidden="true">
-        <property file="${project.basedir}/config/${name}.properties"/>
-
         <phingcall target="setup-repository">
-            <property name="repo.name" value="${name}" />
-            <property name="repo.url" value="${repo.url}" />
+            <property name="name" value="${extension_name}" />
         </phingcall>
 
-        <copy todir="${build.dir}/extension/${name}">
-            <fileset dir="${cache.dir}/${name}/${extension_dir}">
-                <include name="**"/>
-                <exclude name=".git"/>
-            </fileset>
-        </copy>
+        <phingcall target="copy-extension">
+            <property name="name" value="${extension_name}" />
+        </phingcall>
 
-        <exec command="php ${scripts.dir}/activate_extension.php ${name}"
+
+        <exec command="php ${scripts.dir}/activate_extension.php ${extension_name}"
               passthru="true" checkreturn="true" dir="${build.dir}" />
     </target>
 
     <target name="setup-repository" hidden="true">
-        <echo message="START Setting up Repository ${repo.name}" />
+        <property file="${project.basedir}/config/${name}.properties" />
+
         <if>
-            <not><available file="${cache.dir}/${repo.name}" type="dir" property="repo.exists" /></not>
+            <not><available file="${cache.dir}/${name}" type="dir" property="repo.exists" /></not>
             <then>
-                <gitclone repository="${repo.url}" targetPath="${cache.dir}/${repo.name}" />
+                <gitclone repository="${repo.url}" targetPath="${cache.dir}/${name}" />
             </then>
         </if>
-        <gitpull repository="${cache.dir}/${repo.name}" quiet="true" />
-        <echo message="END Setting up Repository ${repo.name}" />
+        <gitpull repository="${cache.dir}/${name}" quiet="true" />
+        <echo message="END Setting up Repository ${name} (${repo.url})" />
+    </target>
+
+    <target name="copy-extension" hidden="true">
+        <property file="${project.basedir}/config/${name}.properties" override="true" />
+
+        <copy todir="${build.dir}/extension/${name}">
+            <fileset dir="${cache.dir}/${extension_name}/${extension_dir}">
+                <include name="**"/>
+                <exclude name=".git"/>
+            </fileset>
+        </copy>
     </target>
 </project>
