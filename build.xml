@@ -69,6 +69,9 @@
         <exec dir="${project.basedir}" command="mysql -e&quot;CREATE DATABASE IF NOT EXISTS ${db.database}&quot; -u${db.user};"
               checkreturn="true" />
 
+        <exec dir="${build.dir}" command="php bin/php/ezpgenerateautoloads.php -e"
+              checkreturn="true" passthru="true"/>
+
         <!-- Generate autoloads for tests -->
         <exec dir="${build.dir}" command="php bin/php/ezpgenerateautoloads.php -s"
               checkreturn="true" passthru="true"/>
