@@ -15,8 +15,7 @@
 
     <property file="${project.basedir}/config/config.properties" />
 
-
-    <property name="extensions" value="" />
+    <property name="extensions" value="ezprestapiprovider" />
 
     <target name="prepare">
         <delete dir="${build.dir}" />
