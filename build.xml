@@ -18,7 +18,13 @@
     <property name="extensions" value="ezprestapiprovider" />
 
     <target name="prepare">
-        <delete dir="${build.dir}" />
+        <if>
+            <available file="${build.dir}" property="build_dir.exists" />
+            <then>
+                <delete dir="${build.dir}" />
+            </then>
+        </if>
+        
         <mkdir dir="${build.dir}" />
         <mkdir dir="${cache.dir}" />
 
