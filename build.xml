@@ -24,7 +24,7 @@
                 <delete dir="${build.dir}" />
             </then>
         </if>
-        
+
         <mkdir dir="${build.dir}" />
         <mkdir dir="${cache.dir}" />
 
@@ -103,11 +103,13 @@
         <exec command="patch -p0 &lt; ${project.basedir}/patches/EZP-21421_ezptestrunner.patch"
               passthru="true" checkreturn="true" dir="${build.dir}" />
 
+        <echo message="Installing composer dependencies" />
         <!-- Install composer dependencies -->
-        <exec command="php ${composer} -n install --no-dev"
+        <exec command="php ${composer} -q -n install --no-dev"
               passthru="true" checkreturn="true" dir="${build.dir}"/>
-        <exec command="php ${composer} -o dump-autoload"
+        <exec command="php ${composer} -q -o dump-autoload"
               passthru="true" checkreturn="true" dir="${build.dir}"/>
+        <echo message="Done" />
     </target>
 
     <target name="setup-extensions" hidden="true">
