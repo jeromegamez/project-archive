@@ -73,28 +73,20 @@ git clone https://github.com/jeromegamez/ezpublish-legacy-tests.git
 
 ## Usage
 
-### eZ Publish Legacy standalone
+### eZ Publish Legacy standalone with builtin extensions
 
 ```
 phing test
 ```
 
-### eZ Publish Legacy with one extension
+### eZ Publish Legacy with one additional extension
 
 ```
 phing test -Dextensions=ezprestapiprovider
 ```
 
-### eZ Publish Legacy with multiple extensions
+### eZ Publish Legacy with multiple additional extensions
 
 ```
 phing test -Dextensions=ezprestapiprovider,ezcomments,ezfind
-```
-
-### Test existing build
-
-This is useful if you have a build available, test changes and don't want to rebuild.
-
-```
-phing test-existing
 ```
