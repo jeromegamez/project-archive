@@ -106,7 +106,7 @@
 
         <echo message="Installing composer dependencies" />
         <!-- Install composer dependencies -->
-        <exec command="php ${composer} -q -n install --no-dev"
+        <exec command="php ${composer} -q -n install --prefer-source --no-dev"
               passthru="true" checkreturn="true" dir="${build.dir}"/>
         <exec command="php ${composer} -q -o dump-autoload"
               passthru="true" checkreturn="true" dir="${build.dir}"/>
