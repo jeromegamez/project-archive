@@ -18,7 +18,10 @@ before_script:
   - phpenv rehash
 
 script:
-  - phing -Ddb.type=${DB} -Ddb.user=${DB_USER} -Ddb.database=${DB_NAME} -Dextensions=ezcomments,ezprestapiprovider test
+  - phing -Ddb.type=${DB} -Ddb.user=${DB_USER} -Ddb.database=${DB_NAME} test
+  - phing -Ddb.type=${DB} -Ddb.user=${DB_USER} -Ddb.database=${DB_NAME} -Dextensions=ezcomments test
+  - phing -Ddb.type=${DB} -Ddb.user=${DB_USER} -Ddb.database=${DB_NAME} -Dextensions=ezfind test
+  - phing -Ddb.type=${DB} -Ddb.user=${DB_USER} -Ddb.database=${DB_NAME} -Dextensions=ezprestapiprovider test
 
 notifications:
   email: false
