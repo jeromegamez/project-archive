@@ -37,7 +37,9 @@ You can always clone this repository and perform the tests on your machine.
 - ezjscore (included in eZ Publish LS)
 - ezoe (included in eZ Publish LS)
 - ezcomments
+- ezfind
 - ezprestapiprovider
+
 
 ## Requirements
 
@@ -86,7 +88,7 @@ phing test -Dextensions=ezprestapiprovider
 ### eZ Publish Legacy with multiple extensions
 
 ```
-phing test -Dextensions=ezprestapiprovider,ezcomments
+phing test -Dextensions=ezprestapiprovider,ezcomments,ezfind
 ```
 
 ### Test existing build
