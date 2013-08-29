@@ -84,6 +84,10 @@
               dir="${build.dir}" passthru="true" checkreturn="true" />
     </target>
 
+    <target name="coveralls">
+        <exec command="php vendor/bin/coveralls -v" dir="${project.basedir}" passthru="true" checkreturn="true" />
+    </target>
+
     <target name="setup-ezpublish" hidden="true">
         <phingcall target="setup-repository">
             <property name="name" value="ezpublish-legacy" />

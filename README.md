@@ -1,5 +1,8 @@
 # eZ Publish Legacy Tests
 
+[![Build Status](https://travis-ci.org/jeromegamez/ezpublish-legacy-tests.png)](https://travis-ci.org/jeromegamez/ezpublish-legacy-tests)
+[![Coverage Status](https://coveralls.io/repos/jeromegamez/ezpublish-legacy-tests/badge.png?branch=master)](https://coveralls.io/r/jeromegamez/ezpublish-legacy-tests?branch=master)
+
 Execute PHPUnit tests for eZ Publish Legacy, optionally with one or more 
 activated extensions.
 
@@ -20,14 +23,15 @@ generated and PHPUnit tests are perfomed.
 - The extensions are activated and the PHPUnit tests for the whole
   installation are started
 
-## Build status [![Build Status](https://travis-ci.org/jeromegamez/ezpublish-legacy-tests.png)](https://travis-ci.org/jeromegamez/ezpublish-legacy-tests)
+## Build status
 
-When the build is marked as failed, this means that one of the extension's
-unit tests did not pass.
+When the build is marked as failed, this means that eZ Publish Legacy or one
+of the tested extensions did not pass the tests. Click on the badges to see
+what the problem was.
 
 Unfortunately, builds can not be triggered automatically as soon as one
 of ezsystems' repositories is updated. So the Travis CI build status only
-gets updated when triggered through a commit here.
+gets updated when triggered through a push here.
 
 You can always clone this repository and perform the tests on your machine.
 
