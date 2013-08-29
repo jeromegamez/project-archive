@@ -101,6 +101,8 @@
         <echo message="Applying patches" />
         <exec command="patch -p0 &lt; ${project.basedir}/patches/EZP-21420_composer.patch" dir="${build.dir}" />
         <exec command="patch -p0 &lt; ${project.basedir}/patches/EZP-21421_ezptestrunner.patch" dir="${build.dir}" />
+        <exec command="patch -p0 &lt; ${project.basedir}/patches/EZP-21435-21436_shared_fixture.patch" dir="${build.dir}" />
+
 
         <echo message="Installing composer dependencies" />
         <!-- Install composer dependencies -->
