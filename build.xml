@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="eZ Publish (LS) Tests" basedir="." default="test">
-    <property name="build.dir" value="${project.basedir}/build" />
+    <property name="build.dir" value="${project.basedir}/build/ezpublish" />
+    <property name="logs.dir" value="${project.basedir}/build/logs" />
     <property name="cache.dir" value="${project.basedir}/cache" />
     <property name="scripts.dir" value="${project.basedir}/scripts" />
 
@@ -27,6 +28,7 @@
 
         <mkdir dir="${build.dir}" />
         <mkdir dir="${cache.dir}" />
+        <mkdir dir="${logs.dir}" />
 
         <!-- Install composer, if not already there -->
         <if>
@@ -36,6 +38,11 @@
             </then>
         </if>
         <exec command="php ${composer} -n self-update" dir="${cache.dir}" />
+
+        <!-- Update vendors in ${project.basedir} -->
+        <echo message="Installing composer dependencies for project" />
+        <!-- Install composer dependencies -->
+        <exec command="php ${composer} -q -n install --prefer-source" dir="${project.basedir}" />
     </target>
 
     <target name="build" depends="prepare, setup-ezpublish, setup-extensions">
@@ -59,7 +66,7 @@
 
         <!-- Perform unit tests -->
         <echo message="Testing eZ Publish with the following extensions: ezformtoken, ezjscore, ezoe, ${extensions}" />
-        <exec command="php -dmemory_limit=1G tests/runtests.php --dsn &quot;${db.type}://${db.user}:${db.password}@127.0.0.1/${db.database}&quot;"
+        <exec command="php -dmemory_limit=1G tests/runtests.php --coverage-clover ${logs.dir}/clover.xml --dsn &quot;${db.type}://${db.user}:${db.password}@127.0.0.1/${db.database}&quot;"
               dir="${build.dir}" passthru="true" checkreturn="true" />
     </target>
 
@@ -73,7 +80,7 @@
         <exec command="php bin/php/ezpgenerateautoloads.php -s" dir="${build.dir}" />
 
         <!-- Perform unit tests -->
-        <exec command="php -dmemory_limit=1G tests/runtests.php --dsn &quot;${db.type}://${db.user}:${db.password}@127.0.0.1/${db.database}&quot;"
+        <exec command="php -dmemory_limit=1G tests/runtests.php --coverage-clover ${logs.dir}/clover.xml --dsn &quot;${db.type}://${db.user}:${db.password}@127.0.0.1/${db.database}&quot;"
               dir="${build.dir}" passthru="true" checkreturn="true" />
     </target>
 
