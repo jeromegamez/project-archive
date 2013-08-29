@@ -32,59 +32,49 @@
         <if>
             <not><available file="${composer}" property="composer.exists" /></not>
             <then>
-                <exec dir="${cache.dir}" command="curl -sS https://getcomposer.org/installer | php"
-                      passthru="true" checkreturn="true" />
+                <exec command="curl -sS https://getcomposer.org/installer | php" dir="${cache.dir}" />
             </then>
         </if>
-        <exec command="php ${composer} -n self-update" passthru="true" checkreturn="true" />
+        <exec command="php ${composer} -n self-update" dir="${cache.dir}" />
     </target>
 
     <target name="build" depends="prepare, setup-ezpublish, setup-extensions">
         <!-- Activating default extensions -->
-        <exec command="php ${scripts.dir}/activate_extension.php ezjscore"
-              passthru="true" checkreturn="true" dir="${build.dir}" />
-        <exec command="php ${scripts.dir}/activate_extension.php ezformtoken"
-              passthru="true" checkreturn="true" dir="${build.dir}" />
-        <exec command="php ${scripts.dir}/activate_extension.php ezoe"
-              passthru="true" checkreturn="true" dir="${build.dir}" />
+        <exec command="php ${scripts.dir}/activate_extension.php ezjscore" dir="${build.dir}" />
+        <exec command="php ${scripts.dir}/activate_extension.php ezformtoken" dir="${build.dir}" />
+        <exec command="php ${scripts.dir}/activate_extension.php ezoe" dir="${build.dir}" />
 
         <!-- Generate autoloads -->
-        <exec dir="${build.dir}" command="php bin/php/ezpgenerateautoloads.php -e"
-              checkreturn="true" passthru="true"/>
-        <exec dir="${build.dir}" command="php bin/php/ezpgenerateautoloads.php -o"
-              checkreturn="true" passthru="true"/>
+        <exec command="php bin/php/ezpgenerateautoloads.php -e" dir="${build.dir}" />
+        <exec command="php bin/php/ezpgenerateautoloads.php -o" dir="${build.dir}" />
     </target>
 
     <target name="test" depends="build">
         <!-- Create test database -->
-        <exec dir="${project.basedir}" command="mysql -e&quot;CREATE DATABASE IF NOT EXISTS ${db.database}&quot; -u${db.user};"
-              checkreturn="true" />
+        <exec command="mysql -e&quot;CREATE DATABASE IF NOT EXISTS ${db.database}&quot; -u${db.user};"
+              dir="${project.basedir}" />
 
         <!-- Generate autoloads for tests -->
-        <exec dir="${build.dir}" command="php bin/php/ezpgenerateautoloads.php -s"
-              checkreturn="true" passthru="true"/>
+        <exec command="php bin/php/ezpgenerateautoloads.php -s" dir="${build.dir}" />
 
         <!-- Perform unit tests -->
         <echo message="Testing eZ Publish with the following extensions: ezformtoken, ezjscore, ezoe, ${extensions}" />
-        <exec dir="${build.dir}" command="php -dmemory_limit=1G tests/runtests.php --dsn &quot;${db.type}://${db.user}:${db.password}@127.0.0.1/${db.database}&quot;"
-              checkreturn="true" passthru="true"/>
+        <exec command="php -dmemory_limit=1G tests/runtests.php --dsn &quot;${db.type}://${db.user}:${db.password}@127.0.0.1/${db.database}&quot;"
+              dir="${build.dir}" passthru="true" checkreturn="true" />
     </target>
 
     <target name="test-existing">
         <!-- Create test database -->
-        <exec dir="${project.basedir}" command="mysql -e&quot;CREATE DATABASE IF NOT EXISTS ${db.database}&quot; -u${db.user};"
-              checkreturn="true" />
+        <exec command="mysql -e&quot;CREATE DATABASE IF NOT EXISTS ${db.database}&quot; -u${db.user};" dir="${project.basedir}" />
 
-        <exec dir="${build.dir}" command="php bin/php/ezpgenerateautoloads.php -e"
-              checkreturn="true" passthru="true"/>
+        <exec command="php bin/php/ezpgenerateautoloads.php -e" dir="${build.dir}" />
 
         <!-- Generate autoloads for tests -->
-        <exec dir="${build.dir}" command="php bin/php/ezpgenerateautoloads.php -s"
-              checkreturn="true" passthru="true"/>
+        <exec command="php bin/php/ezpgenerateautoloads.php -s" dir="${build.dir}" />
 
         <!-- Perform unit tests -->
-        <exec dir="${build.dir}" command="php -dmemory_limit=1G tests/runtests.php --dsn &quot;${db.type}://${db.user}:${db.password}@127.0.0.1/${db.database}&quot;"
-              checkreturn="true" passthru="true"/>
+        <exec command="php -dmemory_limit=1G tests/runtests.php --dsn &quot;${db.type}://${db.user}:${db.password}@127.0.0.1/${db.database}&quot;"
+              dir="${build.dir}" passthru="true" checkreturn="true" />
     </target>
 
     <target name="setup-ezpublish" hidden="true">
@@ -99,17 +89,13 @@
         </copy>
 
         <echo message="Applying patches" />
-        <exec command="patch -p0 &lt; ${project.basedir}/patches/EZP-21420_composer.patch"
-              passthru="true" checkreturn="true" dir="${build.dir}" />
-        <exec command="patch -p0 &lt; ${project.basedir}/patches/EZP-21421_ezptestrunner.patch"
-              passthru="true" checkreturn="true" dir="${build.dir}" />
+        <exec command="patch -p0 &lt; ${project.basedir}/patches/EZP-21420_composer.patch" dir="${build.dir}" />
+        <exec command="patch -p0 &lt; ${project.basedir}/patches/EZP-21421_ezptestrunner.patch" dir="${build.dir}" />
 
         <echo message="Installing composer dependencies" />
         <!-- Install composer dependencies -->
-        <exec command="php ${composer} -q -n install --prefer-source --no-dev"
-              passthru="true" checkreturn="true" dir="${build.dir}"/>
-        <exec command="php ${composer} -q -o dump-autoload"
-              passthru="true" checkreturn="true" dir="${build.dir}"/>
+        <exec command="php ${composer} -q -n install --prefer-source" dir="${build.dir}"/>
+        <exec command="php ${composer} -q -o dump-autoload" dir="${build.dir}"/>
         <echo message="Done" />
     </target>
 
@@ -127,8 +113,7 @@
         </phingcall>
 
 
-        <exec command="php ${scripts.dir}/activate_extension.php ${extension_name}"
-              passthru="true" checkreturn="true" dir="${build.dir}" />
+        <exec command="php ${scripts.dir}/activate_extension.php ${extension_name}" dir="${build.dir}" />
     </target>
 
     <target name="setup-repository" hidden="true">
@@ -137,10 +122,18 @@
         <if>
             <not><available file="${cache.dir}/${name}" type="dir" property="repo.exists" /></not>
             <then>
-                <gitclone repository="${repo.url}" targetPath="${cache.dir}/${name}" />
+                <exec command="git clone ${repo.url} ${name}" dir="${cache.dir}" />
             </then>
         </if>
-        <gitpull repository="${cache.dir}/${name}" quiet="true" />
+
+        <!-- In case the repo.url has changed, we have to reset the origin -->
+        <exec command="git remote rm origin" dir="${cache.dir}/${name}"/>
+        <exec command="git remote add origin ${repo.url}" dir="${cache.dir}/${name}"/>
+
+        <exec command="git fetch -q origin" dir="${cache.dir}/${name}"/>
+        <exec command="git reset -q --hard origin/${repo.branch}" dir="${cache.dir}/${name}"/>
+        <exec command="git checkout -q ${repo.revision}" dir="${cache.dir}/${name}"/>
+
         <echo message="END Setting up Repository ${name} (${repo.url})" />
     </target>
 

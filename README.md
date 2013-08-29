@@ -50,12 +50,6 @@ pear channel-discover pear.phing.info
 pear install phing/phing
 ```
 
-### PEAR/VersionControl_Git
-
-```
-pear install VersionControl_Git-0.4.4
-```
-
 ### MySQL and a test database
 
 Out of the box, the script expects a MySQL server instance at `127.0.0.1`, a database named `ezpublish_test`,
