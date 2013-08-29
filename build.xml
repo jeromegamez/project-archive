@@ -16,8 +16,6 @@
 
     <property file="${project.basedir}/config/config.properties" />
 
-    <property name="extensions" value="ezprestapiprovider" />
-
     <target name="prepare">
         <if>
             <available file="${build.dir}" property="build_dir.exists" />
@@ -57,6 +55,7 @@
     </target>
 
     <target name="test" depends="build">
+        <echo message="Testing with the following extensions: ${extensions}" />
         <!-- Create test database -->
         <exec command="mysql -e&quot;CREATE DATABASE IF NOT EXISTS ${db.database}&quot; -u${db.user};"
               dir="${project.basedir}" />
