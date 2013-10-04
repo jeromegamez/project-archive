@@ -16,9 +16,6 @@ env:
     - TIMEZONE="Europe/Berlin"
 
 before_script:
-  - pear channel-discover pear.phing.info
-  - pear install phing/phing
-  - phpenv rehash
   - curl -s http://getcomposer.org/installer | php
   - php composer.phar install --dev --no-interaction
 
