@@ -106,12 +106,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/phingofficial/phing.git",
-                "reference": "0936e48ab43b30642c1e3cb65d29b899031dd40e"
+                "reference": "51fa0d0b49edd5d304f93b8d8d0418b0ec43476a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phingofficial/phing/zipball/0936e48ab43b30642c1e3cb65d29b899031dd40e",
-                "reference": "0936e48ab43b30642c1e3cb65d29b899031dd40e",
+                "url": "https://api.github.com/repos/phingofficial/phing/zipball/51fa0d0b49edd5d304f93b8d8d0418b0ec43476a",
+                "reference": "51fa0d0b49edd5d304f93b8d8d0418b0ec43476a",
                 "shasum": ""
             },
             "require": {
@@ -150,7 +150,7 @@
                 "task",
                 "tool"
             ],
-            "time": "2013-09-29 08:59:48"
+            "time": "2013-10-07 21:24:40"
         },
         {
             "name": "psr/log",
@@ -262,7 +262,7 @@
         },
         {
             "name": "symfony/config",
-            "version": "v2.3.5",
+            "version": "v2.3.6",
             "target-dir": "Symfony/Component/Config",
             "source": {
                 "type": "git",
@@ -310,7 +310,7 @@
         },
         {
             "name": "symfony/console",
-            "version": "v2.3.5",
+            "version": "v2.3.6",
             "target-dir": "Symfony/Component/Console",
             "source": {
                 "type": "git",
@@ -363,7 +363,7 @@
         },
         {
             "name": "symfony/event-dispatcher",
-            "version": "v2.3.5",
+            "version": "v2.3.6",
             "target-dir": "Symfony/Component/EventDispatcher",
             "source": {
                 "type": "git",
@@ -417,7 +417,7 @@
         },
         {
             "name": "symfony/filesystem",
-            "version": "v2.3.5",
+            "version": "v2.3.6",
             "target-dir": "Symfony/Component/Filesystem",
             "source": {
                 "type": "git",
@@ -464,7 +464,7 @@
         },
         {
             "name": "symfony/stopwatch",
-            "version": "v2.3.5",
+            "version": "v2.3.6",
             "target-dir": "Symfony/Component/Stopwatch",
             "source": {
                 "type": "git",
@@ -511,7 +511,7 @@
         },
         {
             "name": "symfony/yaml",
-            "version": "v2.3.5",
+            "version": "v2.3.6",
             "target-dir": "Symfony/Component/Yaml",
             "source": {
                 "type": "git",
