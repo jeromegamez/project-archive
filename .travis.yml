@@ -20,7 +20,7 @@ before_script:
   - php composer.phar install --dev --no-interaction
 
 script:
-  - phing -Ddb.type=${DB} -Ddb.user=${DB_USER} -Ddb.database=${DB_NAME} test
+  - vendor/bin/phing -Ddb.type=${DB} -Ddb.user=${DB_USER} -Ddb.database=${DB_NAME} test
 
 after_script:
   - php vendor/bin/coveralls -v
