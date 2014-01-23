@@ -53,13 +53,23 @@ Out of the box, the script expects a MySQL server instance at `127.0.0.1`, a dat
 and user `root` with no password. If you want to override those values, copy the file `config/config.properties` to
 `config/config_local.properties` and change the variables.
 
+### Composer
+
+See the [Composer Website](https://getcomposer.org/) for further information.
+
+### PHPUnit
+
+See the [PHPUnit Website](http://phpunit.de/) for further information.
+
 
 ## Installation
 
-Clone this repository
+Clone this repository and install the dependencies
 
 ```
 git clone https://github.com/jeromegamez/ezpublish-legacy-tests.git
+cd ezpublish-legacy-tests
+composer install
 ```
 
 ## Usage
