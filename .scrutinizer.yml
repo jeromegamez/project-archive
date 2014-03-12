@@ -1,5 +1,5 @@
 before_commands:
-    - "composer install -n --prefer-dist"
+    - "composer install -n"
 filter:
     paths: [src/*]
     excluded_paths: [tests/*, vendor/*]
