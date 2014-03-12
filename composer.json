@@ -13,10 +13,10 @@
     ],
     "require": {
         "php": ">=5.3.2",
-        "guzzle/http": "self.version"
+        "guzzle/http": "~3.8"
     },
     "require-dev": {
-        "guzzle/plugin-mock": "self.version",
+        "guzzle/plugin-mock": "~3.8",
         "phpdocumentor/phpdocumentor": "~2.3",
         "phpunit/phpunit": "~4.0"
     },
