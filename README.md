@@ -25,7 +25,7 @@ The versioning of this plugin is geared to the versioning of the main Guzzle pro
 
 ## Installation
 
-The recommended way to install the Guzzle Mock Plugin is with [Composer](http://getcomposer.org).
+The recommended way to install the Guzzle Fixture Plugin is with [Composer](http://getcomposer.org).
 Composer is a dependency management tool for PHP that allows you to declare the dependencies your
 project needs and installs them into your project.
 
@@ -33,8 +33,8 @@ project needs and installs them into your project.
 # Install Composer
 curl -sS https://getcomposer.org/installer | php
 
-# Add guzzle-mock-plugin as a dependency
-php composer.phar require jeromegamez/guzzle-mock-plugin:~3.8
+# Add guzzle-plugin-fixture as a dependency
+php composer.phar require jeromegamez/guzzle-plugin-fixture:~3.8
 ```
 
 After installing, you need to require Composer's autoloader:
