@@ -1,6 +1,6 @@
 {
     "name": "jeromegamez/guzzle-plugin-fixture",
-    "description": "Guzzle Fixture plugin",
+    "description": "A Guzzle plugin for automatic mock response/fixture creation and retrieval.",
     "homepage": "https://github.com/jeromegamez/guzzle-plugin-fixture/",
     "keywords": ["fixture", "plugin", "guzzle"],
     "license": "MIT",

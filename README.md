@@ -5,7 +5,7 @@
 [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/jeromegamez/guzzle-plugin-fixture/badges/quality-score.png?s=c0f8d4ec45ea08ab27c7b934fa03c10a0d9646a2)](https://scrutinizer-ci.com/g/jeromegamez/guzzle-plugin-fixture/)
 [![Build Status](https://secure.travis-ci.org/jeromegamez/guzzle-plugin-fixture.png?branch=master)](http://travis-ci.org/jeromegamez/guzzle-plugin-fixture)
 
-A [Guzzle](http://guzzle.readthedocs.org/) plugin for automatic fixture creation and retrieval.
+A [Guzzle](http://guzzle.readthedocs.org/) plugin for automatic mock response/fixture creation and retrieval.
 
 From the [Guzzle Documentation](http://guzzle.readthedocs.org/en/latest/testing/unit-testing.html#queueing-mock-responses):
 
