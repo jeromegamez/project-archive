@@ -34,6 +34,8 @@ class FixturePluginTest extends \PHPUnit_Framework_TestCase
     /**
      * If set to true, all generated fixtures will also be stored to tests/_fixtures
      *
+     * This is a manual setting while developing on the plugin, to generate new fixtures
+     *
      * @var bool
      */
     protected $backupFixtures = false;
@@ -58,7 +60,6 @@ class FixturePluginTest extends \PHPUnit_Framework_TestCase
             }
         }
     }
-
 
     /**
      * Workspace preparation before each test
