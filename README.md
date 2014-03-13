@@ -21,6 +21,8 @@ without the need for remote connections.
 
 You can then commit the fixtures to your repository and ensure that no remote connection is needed to run your tests.
 
+The versioning of this plugin is geared to the versioning of the main Guzzle project; thus ~3.8 fits Guzzle ~3.8.
+
 ## Installation
 
 The recommended way to install the Guzzle Mock Plugin is with [Composer](http://getcomposer.org).
