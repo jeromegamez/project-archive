@@ -50,8 +50,8 @@ class FixturePlugin extends AbstractHasDispatcher implements EventSubscriberInte
     {
         // Use a number slightly lower than the MockPlugin
         return array(
-            'request.before_send' => array('onRequestBeforeSend', -1000),
-            'request.success' => array('onRequestAfterSuccess', -1000),
+            'request.before_send' => array('onRequestBeforeSend', -998),
+            'request.complete' => array('onRequestAfterComplete', -998),
         );
     }
 
@@ -65,10 +65,9 @@ class FixturePlugin extends AbstractHasDispatcher implements EventSubscriberInte
         /** @var RequestInterface $request */
         $request = $event['request'];
 
-        $filename = $this->fixturesDir . DIRECTORY_SEPARATOR . md5($request->getUrl());
-
-        if($response = $this->getFixture($filename)) {
+        if($response = $this->getResponseFromFixture($request->getUrl())) {
             $request->setResponse($response);
+            $event->stopPropagation();
         }
     }
 
@@ -77,32 +76,54 @@ class FixturePlugin extends AbstractHasDispatcher implements EventSubscriberInte
      *
      * @param Event $event
      */
-    public function onRequestAfterSuccess(Event $event)
+    public function onRequestAfterComplete(Event $event)
     {
         /** @var RequestInterface $request */
         $request = $event['request'];
         /** @var Response $response */
         $response = $event['response'];
 
-        $filename = $this->fixturesDir . DIRECTORY_SEPARATOR . md5($request->getUrl());
+        $this->storeResponseToFixture($request->getUrl(), $response);
 
-        if (!$this->getFixture($filename)) {
-            file_put_contents($filename, $response->getMessage());
+        // We have what we want and don't need another exception
+        // Remove default error listener, so that no exception will be thrown
+        $request->getEventDispatcher()->removeListener('request.error', array('Guzzle\Http\Message\Request', 'onRequestError'));
+    }
+
+
+    /**
+     * Stores the given response to a file, if it not already exists
+     *
+     * @param string $url
+     * @param Response $response
+     * @return bool
+     */
+    protected function storeResponseToFixture($url, Response $response)
+    {
+        $filename = $this->fixturesDir . DIRECTORY_SEPARATOR . md5($url);
+
+        if (!file_exists($filename)) {
+            return (bool) file_put_contents($filename, $response->getMessage());
         }
+
+        return true;
     }
 
     /**
-     * Get a mock response from a fixture, if available
+     * If a fixture file exists for the given URL, generates a response from
+     * its contents
      *
-     * @param string $filename
-     * @return Response|null
+     * @param string $url
+     * @return Response|bool|null
      */
-    private function getFixture($filename)
+    protected function getResponseFromFixture($url)
     {
-        if (!file_exists($filename)) {
-            return null;
+        $filename = $this->fixturesDir . DIRECTORY_SEPARATOR . md5($url);
+
+        if (file_exists($filename)) {
+            return Response::fromMessage(file_get_contents($filename));
         }
 
-        return Response::fromMessage(file_get_contents($filename));
+        return null;
     }
 }

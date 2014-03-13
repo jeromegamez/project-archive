@@ -25,6 +25,42 @@ class FixturePluginTest extends \PHPUnit_Framework_TestCase
     protected $workspace;
 
     /**
+     * The directory in which the "real" fixtures for the tests reside
+     *
+     * @var string
+     */
+    protected $fixturesDir;
+
+    /**
+     * If set to true, all generated fixtures will also be stored to tests/_fixtures
+     *
+     * @var bool
+     */
+    protected $backupFixtures = false;
+
+    /**
+     * Constructs the test case with the given name.
+     *
+     * If {@see $backupFixtures} is set to true, makes sure that the _fixtures dir is present
+     *
+     * @param null $name
+     * @param array $data
+     * @param string $dataName
+     */
+    public function __construct($name = null, array $data = array(), $dataName = '')
+    {
+        parent::__construct($name, $data, $dataName);
+
+        if ($this->backupFixtures) {
+            $this->fixturesDir = __DIR__ . DIRECTORY_SEPARATOR . '_fixtures';
+            if (!file_exists($this->fixturesDir)) {
+                mkdir($this->fixturesDir, 0777, true);
+            }
+        }
+    }
+
+
+    /**
      * Workspace preparation before each test
      */
     protected function setUp()
@@ -42,6 +78,7 @@ class FixturePluginTest extends \PHPUnit_Framework_TestCase
     public function tearDown()
     {
         $this->clean($this->workspace);
+
         parent::tearDown();
     }
 
@@ -87,60 +124,110 @@ class FixturePluginTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue(file_exists($fixturesDir));
     }
 
-    public function testGetFreshFixture()
+    /**
+     * @param string $url
+     * @dataProvider urlProvider
+     */
+    public function testGetFixture($url)
     {
         $fixturesDir = $this->workspace . DIRECTORY_SEPARATOR . '_fixtures' . __FUNCTION__;
 
-        $url = 'http://www.example.com';
+        $client = new HttpClient();
+
+        $fixturePlugin = new FixturePlugin($fixturesDir);
+        $client->addSubscriber($fixturePlugin);
+
         $md5Url = md5($url);
 
         $originalFixture = __DIR__ . DIRECTORY_SEPARATOR . '_fixtures' . DIRECTORY_SEPARATOR . $md5Url;
-        $createdFixture = $fixturesDir . DIRECTORY_SEPARATOR . $md5Url;
+        $expectedFixture = $fixturesDir . DIRECTORY_SEPARATOR . $md5Url;
 
-        $mockPlugin = new MockPlugin(array($originalFixture));
-        $fixturePlugin = new FixturePlugin($fixturesDir);
+        // The original fixture might not be available when developing on the plugin and new fixtures
+        // need to be created
+        if (file_exists($originalFixture)) {
+            $mockPlugin = new MockPlugin(array($originalFixture));
+            $client->addSubscriber($mockPlugin);
+        }
 
-        $client = new HttpClient();
-        $client->addSubscriber($mockPlugin);
-        $client->addSubscriber($fixturePlugin);
-
+        $this->assertFileNotExists($expectedFixture);
         $request = $client->get($url);
         $response = $request->send();
-
-        $this->assertContainsOnly($request, $mockPlugin->getReceivedRequests());
+        $this->assertFileExists($expectedFixture);
 
         $this->assertInstanceOf('Guzzle\Http\Message\Response', $response);
-        $this->assertTrue(file_exists($createdFixture));
-        $this->assertEquals(file_get_contents($originalFixture), file_get_contents($createdFixture));
+        $this->assertTrue(file_exists($expectedFixture));
+
+        // The original fixture might not be available when developing on the plugin and new fixtures
+        // need to be created
+        if(file_exists($originalFixture)) {
+            $this->assertEquals(file_get_contents($originalFixture), file_get_contents($expectedFixture));
+        }
+
+        if($this->backupFixtures) {
+            file_put_contents($this->fixturesDir . DIRECTORY_SEPARATOR . $md5Url, file_get_contents($expectedFixture));
+        }
+
+        // Get fixture a second time, now should get result from fixture directly
+        $request->send();
     }
 
-    public function testGetFixtureFromFilesystem()
+    public function testCreateAndReadFromFixtureThatNotAlreadyExisted()
     {
-        $fixturesDir = $this->workspace . DIRECTORY_SEPARATOR . '_fixtures' . __FUNCTION__;
 
-        $url = 'http://www.example.com';
-        $md5Url = md5($url);
+    }
 
-        $originalFixture = __DIR__ . DIRECTORY_SEPARATOR . '_fixtures' . DIRECTORY_SEPARATOR . $md5Url;
-        $createdFixture = $fixturesDir . DIRECTORY_SEPARATOR . $md5Url;
+    public function urlProvider()
+    {
+        /**
+         * @see http://httpstat.us/
+         */
+        $statusCodes = array(
+            200 => 'OK',
+            201 => 'Created',
+            202 => 'Accepted',
+            203 => 'Non-Authoritative Information',
+            204 => 'No Content',
+            205 => 'Reset Content',
+            206 => 'Partial Content',
+            300 => 'Multiple Choices',
+            301 => 'Moved Permanently',
+            302 => 'Found',
+            303 => 'See Other',
+            304 => 'Not Modified',
+            305 => 'Use Proxy',
+            307 => 'Temporary Redirect',
+            400 => 'Bad Request',
+            401 => 'Unauthorized',
+            402 => 'Payment Required',
+            403 => 'Forbidden',
+            404 => 'Not Found',
+            405 => 'Method Not Allowed',
+            406 => 'Not Acceptable',
+            407 => 'Proxy Authentication Required',
+            408 => 'Request Timeout',
+            409 => 'Conflict',
+            410 => 'Gone',
+            411 => 'Length Required',
+            412 => 'Precondition Failed',
+            413 => 'Request Entity Too Large',
+            414 => 'Request-URI Too Long',
+            415 => 'Unsupported Media Type',
+            416 => 'Requested Range Not Satisfiable',
+            417 => 'Expectation Failed',
+            500 => 'Internal Server Error',
+            501 => 'Not Implemented',
+            502 => 'Bad Gateway',
+            503 => 'Service Unavailable',
+            504 => 'Gateway Timeout',
+            505 => 'HTTP Version Not Supported',
+        );
 
-        // Copy the prepared fixture to the test fixtures dir
-        $originalFileMTime = strtotime('2000-01-01 00:00:00');
-        mkdir($fixturesDir, 0777);
-        copy($originalFixture, $createdFixture);
-        touch($createdFixture, $originalFileMTime, $originalFileMTime);
+        $return = array();
+        foreach(array_keys($statusCodes) as $statusCode) {
+            $return[] = array('http://httpstat.us/' . $statusCode);
+        }
 
-        $this->assertEquals($originalFileMTime, filemtime($createdFixture));
-
-        $fixturePlugin = new FixturePlugin($fixturesDir);
-
-        $client = new HttpClient();
-        $client->addSubscriber($fixturePlugin);
-
-        $client->get($url)->send();
-
-        $this->assertEquals($originalFileMTime, filemtime($createdFixture));
-
+        return $return;
     }
 }
  
