@@ -7,6 +7,20 @@
 
 A [Guzzle](http://guzzle.readthedocs.org/) plugin for automatic fixture creation and retrieval.
 
+From the [Guzzle Documentation](http://guzzle.readthedocs.org/en/latest/testing/unit-testing.html#queueing-mock-responses):
+
+> Mock responses can be used to test if requests are being generated correctly and responses and handled correctly by your client.
+
+But creating these mock responses/fixtures can be tedious, if you need many of them.
+
+This Guzzle Fixture Plugin allows you to create the fixtures **with** your unit tests. The first time you execute your
+tests, real requests will be made to the remote endpoints and the results will be stored to a defined directory.
+
+The second time you execute your test suite, the contents of the previously generated fixture files will be taken,
+without the need for remote connections.
+
+You can then commit the fixtures to your repository and ensure that no remote connection is needed to run your tests.
+
 ## Installation
 
 The recommended way to install the Guzzle Mock Plugin is with [Composer](http://getcomposer.org).
