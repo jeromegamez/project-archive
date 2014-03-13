@@ -107,11 +107,11 @@ class FixturePluginTest extends \PHPUnit_Framework_TestCase
     {
         $fixturesDir = $this->workspace . DIRECTORY_SEPARATOR . '_fixtures' . __FUNCTION__;
 
-        $this->assertFalse(file_exists($fixturesDir));
+        $this->assertFileNotExists($fixturesDir);
 
         new FixturePlugin($fixturesDir);
 
-        $this->assertTrue(file_exists($fixturesDir));
+        $this->assertFileExists($fixturesDir);
         $this->assertTrue(is_dir($fixturesDir));
         $this->assertTrue(is_writable($fixturesDir));
     }
@@ -120,9 +120,10 @@ class FixturePluginTest extends \PHPUnit_Framework_TestCase
     {
         $fixturesDir = $this->workspace . DIRECTORY_SEPARATOR . '_fixtures' . __FUNCTION__;
         mkdir($fixturesDir, 0777);
+
         new FixturePlugin($fixturesDir);
 
-        $this->assertTrue(file_exists($fixturesDir));
+        $this->assertFileExists($fixturesDir);
     }
 
     /**
@@ -156,12 +157,12 @@ class FixturePluginTest extends \PHPUnit_Framework_TestCase
         $this->assertFileExists($expectedFixture);
 
         $this->assertInstanceOf('Guzzle\Http\Message\Response', $response);
-        $this->assertTrue(file_exists($expectedFixture));
+        $this->assertFileExists($expectedFixture);
 
         // The original fixture might not be available when developing on the plugin and new fixtures
         // need to be created
         if(file_exists($originalFixture)) {
-            $this->assertEquals(file_get_contents($originalFixture), file_get_contents($expectedFixture));
+            $this->assertFileEquals($originalFixture, $expectedFixture);
         }
 
         if($this->backupFixtures) {
