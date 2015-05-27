@@ -3,3 +3,5 @@ cache/*
 
 config/config_local.properties
 /vendor/
+
+/composer.lock
