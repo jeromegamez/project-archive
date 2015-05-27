@@ -40,7 +40,7 @@
         <!-- Update vendors in ${project.basedir} -->
         <echo message="Installing composer dependencies for project" />
         <!-- Install composer dependencies -->
-        <exec command="php ${composer} -q -n install --prefer-source" dir="${project.basedir}" />
+        <exec command="php ${composer} -q -n install" dir="${project.basedir}" />
     </target>
 
     <target name="build" depends="prepare, setup-ezpublish, setup-extensions">
@@ -98,13 +98,15 @@
             </fileset>
         </copy>
 
+        <symlink target="${cache.dir}/vendor" link="${build.dir}/vendor" overwrite="true" />
+
         <echo message="Applying patches" />
         <exec command="patch -p0 &lt; ${project.basedir}/patches/EZP-21435-21436_shared_fixture.patch" dir="${build.dir}" />
 
 
         <echo message="Installing composer dependencies" />
         <!-- Install composer dependencies -->
-        <exec command="php ${composer} -q -n install --prefer-source" dir="${build.dir}"/>
+        <exec command="php ${composer} -q -n install" dir="${build.dir}"/>
         <exec command="php ${composer} -q -o dump-autoload" dir="${build.dir}"/>
         <echo message="Done" />
     </target>
