@@ -1,0 +1,2 @@
+src_dir: build/ezpublish
+coverage_clover: build/logs/clover.xml

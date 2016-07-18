@@ -1,0 +1,11 @@
+{
+    "name":         "jeromegamez/ezpublish-legacy-tests",
+    "description":  "Execute PHPUnit tests for eZ Publish Legacy, optionally with one or more activated extensions.",
+    "homepage":     "https://github.com/jeromegamez/ezpublish-legacy-tests",
+    "license":      "GPL-3.0",
+    "type":         "project",
+    "require-dev": {
+        "satooshi/php-coveralls": "~0.6",
+        "phing/phing": "^2.9.0"
+    }
+}

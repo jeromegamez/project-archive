@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="eZ Publish (LS) Tests" basedir="." default="test">
+    <property name="build.dir" value="${project.basedir}/build/ezpublish" />
+    <property name="logs.dir" value="${project.basedir}/build/logs" />
+    <property name="cache.dir" value="${project.basedir}/cache" />
+    <property name="scripts.dir" value="${project.basedir}/scripts" />
+
+    <resolvepath file="${cache.dir}/composer.phar" propertyName="composer" />
+
+    <if>
+        <available file="${project.basedir}/config/config_local.properties" property="local_config.exists" />
+        <then>
+            <property file="${project.basedir}/config/config_local.properties" />
+        </then>
+    </if>
+
+    <property file="${project.basedir}/config/config.properties" />
+
+    <target name="prepare">
+        <if>
+            <available file="${build.dir}" property="build_dir.exists" />
+            <then>
+                <delete dir="${build.dir}" />
+            </then>
+        </if>
+
+        <mkdir dir="${build.dir}" />
+        <mkdir dir="${cache.dir}" />
+        <mkdir dir="${logs.dir}" />
+
+        <!-- Install composer, if not already there -->
+        <if>
+            <not><available file="${composer}" property="composer.exists" /></not>
+            <then>
+                <exec command="curl -sS https://getcomposer.org/installer | php" dir="${cache.dir}" />
+            </then>
+        </if>
+        <exec command="php ${composer} -n self-update" dir="${cache.dir}" />
+
+        <!-- Update vendors in ${project.basedir} -->
+        <echo message="Installing composer dependencies for project" />
+        <!-- Install composer dependencies -->
+        <exec command="php ${composer} -q -n install" dir="${project.basedir}" />
+    </target>
+
+    <target name="build" depends="prepare, setup-ezpublish, setup-extensions">
+        <!-- Activating default extensions -->
+        <exec command="php ${scripts.dir}/activate_extension.php ezjscore" dir="${build.dir}" />
+        <exec command="php ${scripts.dir}/activate_extension.php ezformtoken" dir="${build.dir}" />
+        <exec command="php ${scripts.dir}/activate_extension.php ezoe" dir="${build.dir}" />
+
+        <!-- Generate autoloads -->
+        <exec command="php bin/php/ezpgenerateautoloads.php -e" dir="${build.dir}" />
+        <exec command="php bin/php/ezpgenerateautoloads.php -o" dir="${build.dir}" />
+    </target>
+
+    <target name="test" depends="build">
+        <echo message="Testing with the following extensions: ${extensions}" />
+        <!-- Create test database -->
+        <exec command="mysql -e&quot;CREATE DATABASE IF NOT EXISTS ${db.database}&quot; -u${db.user};"
+              dir="${project.basedir}" />
+
+        <!-- Generate autoloads for tests -->
+        <exec command="php bin/php/ezpgenerateautoloads.php -s" dir="${build.dir}" />
+
+        <!-- Perform unit tests -->
+        <echo message="Testing eZ Publish with the following extensions: ezformtoken, ezjscore, ezoe, ${extensions}" />
+        <exec command="php -dmemory_limit=1G tests/runtests.php --coverage-clover ${logs.dir}/clover.xml --dsn &quot;${db.type}://${db.user}:${db.password}@127.0.0.1/${db.database}&quot;"
+              dir="${build.dir}" passthru="true" checkreturn="true" />
+    </target>
+
+    <target name="test-existing">
+        <!-- Create test database -->
+        <exec command="mysql -e&quot;CREATE DATABASE IF NOT EXISTS ${db.database}&quot; -u${db.user};" dir="${project.basedir}" />
+
+        <exec command="php bin/php/ezpgenerateautoloads.php -e" dir="${build.dir}" />
+
+        <!-- Generate autoloads for tests -->
+        <exec command="php bin/php/ezpgenerateautoloads.php -s" dir="${build.dir}" />
+
+        <!-- Perform unit tests -->
+        <exec command="php -dmemory_limit=1G tests/runtests.php --coverage-clover ${logs.dir}/clover.xml --dsn &quot;${db.type}://${db.user}:${db.password}@127.0.0.1/${db.database}&quot;"
+              dir="${build.dir}" passthru="true" checkreturn="true" />
+    </target>
+
+    <target name="coveralls">
+        <exec command="php vendor/bin/coveralls -v" dir="${project.basedir}" passthru="true" checkreturn="true" />
+    </target>
+
+    <target name="setup-ezpublish" hidden="true">
+        <phingcall target="setup-repository">
+            <property name="name" value="ezpublish-legacy" />
+        </phingcall>
+
+        <copy todir="${build.dir}" verbose="false">
+            <fileset dir="${cache.dir}/ezpublish-legacy">
+                <include name="**"/>
+            </fileset>
+        </copy>
+
+        <symlink target="${cache.dir}/vendor" link="${build.dir}/vendor" overwrite="true" />
+
+        <echo message="Applying patches" />
+        <exec command="patch -p0 &lt; ${project.basedir}/patches/EZP-21435-21436_shared_fixture.patch" dir="${build.dir}" />
+
+
+        <echo message="Installing composer dependencies" />
+        <!-- Install composer dependencies -->
+        <exec command="php ${composer} -q -n install" dir="${build.dir}"/>
+        <exec command="php ${composer} -q -o dump-autoload" dir="${build.dir}"/>
+        <echo message="Done" />
+    </target>
+
+    <target name="setup-extensions" hidden="true">
+        <foreach list="${extensions}" param="extension_name" target="setup-extension" />
+    </target>
+
+    <target name="setup-extension" hidden="true">
+        <phingcall target="setup-repository">
+            <property name="name" value="${extension_name}" />
+        </phingcall>
+
+        <phingcall target="copy-extension">
+            <property name="name" value="${extension_name}" />
+        </phingcall>
+
+
+        <exec command="php ${scripts.dir}/activate_extension.php ${extension_name}" dir="${build.dir}" />
+    </target>
+
+    <target name="setup-repository" hidden="true">
+        <property file="${project.basedir}/config/${name}.properties" />
+
+        <if>
+            <not><available file="${cache.dir}/${name}" type="dir" property="repo.exists" /></not>
+            <then>
+                <exec command="git clone ${repo.url} ${name}" dir="${cache.dir}" />
+            </then>
+        </if>
+
+        <!-- In case the repo.url has changed, we have to reset the origin -->
+        <exec command="git remote rm origin" dir="${cache.dir}/${name}"/>
+        <exec command="git remote add origin ${repo.url}" dir="${cache.dir}/${name}"/>
+
+        <exec command="git fetch -q origin" dir="${cache.dir}/${name}"/>
+        <exec command="git reset -q --hard origin/${repo.branch}" dir="${cache.dir}/${name}"/>
+        <exec command="git checkout -q ${repo.revision}" dir="${cache.dir}/${name}"/>
+
+        <echo message="END Setting up Repository ${name} (${repo.url})" />
+    </target>
+
+    <target name="copy-extension" hidden="true">
+        <property file="${project.basedir}/config/${name}.properties" override="true" />
+
+        <copy todir="${build.dir}/extension/${name}">
+            <fileset dir="${cache.dir}/${extension_name}/${extension_dir}">
+                <include name="**"/>
+            </fileset>
+        </copy>
+    </target>
+</project>

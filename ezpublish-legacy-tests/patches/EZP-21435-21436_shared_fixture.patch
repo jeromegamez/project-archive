@@ -1,0 +1,29 @@
+--- tests/toolkit/ezpdatabasesuite.php
++++ tests/toolkit/ezpdatabasesuite.php
+@@ -58,6 +58,11 @@ protected function setUp()
+             eZDB::setInstance( $this->sharedFixture );
+             self::$isDatabaseSetup = true;
+         }
++
++        if ( !( $this->sharedFixture instanceof eZDBInterface ) && eZDB::hasInstance() )
++        {
++            $this->sharedFixture = eZDB::instance();
++        }
+     }
+ }
+ ?>
+
+--- tests/toolkit/ezpdatabasetestcase.php
++++ tests/toolkit/ezpdatabasetestcase.php
+@@ -55,6 +55,11 @@ protected function setUp()
+ 
+             eZDB::setInstance( $this->sharedFixture );
+         }
++
++        if ( !( $this->sharedFixture instanceof eZDBInterface ) && eZDB::hasInstance() )
++        {
++            $this->sharedFixture = eZDB::instance();
++        }
+     }
+ 
+     protected function tearDown()
