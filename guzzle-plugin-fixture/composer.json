@@ -1,0 +1,33 @@
+{
+    "name": "jeromegamez/guzzle-plugin-fixture",
+    "description": "A Guzzle plugin for automatic mock response/fixture creation and retrieval.",
+    "homepage": "https://github.com/jeromegamez/guzzle-plugin-fixture/",
+    "keywords": ["fixture", "plugin", "guzzle"],
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Jérôme Gamez",
+            "email": "jerome@gamez.name",
+            "homepage": "https://github.com/jeromegamez"
+        }
+    ],
+    "require": {
+        "php": ">=5.3.3",
+        "guzzle/http": "~3.8"
+    },
+    "require-dev": {
+        "guzzle/plugin-mock": "~3.8",
+        "phpdocumentor/phpdocumentor": "~2.3",
+        "phpunit/phpunit": "~4.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Guzzle\\Plugin\\Fixture\\": "src"
+        }
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-master": "3.8-dev"
+        }
+    }
+}

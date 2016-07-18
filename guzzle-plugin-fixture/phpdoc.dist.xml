@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<phpdocumentor>
+    <title>Knightingale</title>
+    <parser>
+        <encoding>utf-8</encoding>
+        <target>build/phpdoc/build</target>
+        <markers>
+            <item>TODO</item>
+            <item>FIXME</item>
+        </markers>
+    </parser>
+    <files>
+        <directory>src</directory>
+        <!--directory>tests</directory-->
+        <ignore-hidden>on</ignore-hidden>
+        <ignore-symlinks>on</ignore-symlinks>
+    </files>
+    <transformer>
+        <target>build/phpdoc</target>
+    </transformer>
+    <logging>
+        <level>error</level>
+    </logging>
+    <transformations>
+        <template name="responsive-twig"/>
+        <!--template name="clean"/-->
+    </transformations>
+</phpdocumentor>
